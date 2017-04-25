@@ -25,15 +25,28 @@ private:
 	size_t mParentsSize;
 	size_t mChildrenSize;
 	size_t mSurvivorsSize;
+	size_t mPopulationSize;
 protected:
 	genome_t* mParents;
 	genome_t* mChildren;
 	genome_t* mSurvivors;
+	genome_t* mPopulation;
 	size_t mEpochs;
+private:
+	static bool reallocate_buffer(genome_t*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
+		if(! aBuffer) {
+			aBuffer = new genome_t[aNewSize];
+			aOldSize = aNewSize;
+			return true;
+		}else if(mChildrenSize < chiC) {
+			delete[] aBuffer;
+			aBuffer = new genome_t[aNewSize];
+			aOldSize = aNewSize;
+			return true;
+		}
+		return false;
+	}
 protected:
-	virtual genome_t* get_population() throw() = 0;
-	virtual const genome_t* get_population() const throw() = 0;
-
 	// Operators
 	virtual void seed(genome_t&) const throw() = 0;
 	virtual const genome_t& select_parent() const throw() = 0;
@@ -43,39 +56,13 @@ protected:
 
 	// Inherited from base_genetic_algorithm
 	virtual void epoch() const throw() override {
-		const size_t popC = get_population_count();
 		const size_t parC = get_parent_count();
 		const size_t chiC = get_child_count();
 		const size_t surC = get_survivor_count();
 		
-		// Allocate memory for parent storage
-		if(! mParents) {
-			mParents = new genome_t[parC];
-			mParentsSize = parC;
-			mParentsSize = parC;
-		}else if(mParentsSize < parC) {
-			delete[] mParents;
-			mParents = new genome_t[parC];
-			mParentsSize = parC;
-		}
-		
-		// Allocate memory for child storage
-		if(! mChildren) {
-			mChildren = new genome_t[chiC];
-		}else if(mChildrenSize < chiC) {
-			delete[] mChildrenSize;
-			mChildren = new genome_t[chiC];
-			mChildrenSize = chiC;
-		}
-		
-		// Allocate memory for survivor storage
-		if(! mSurvivors) {
-			mSurvivors = new genome_t[surC];
-		}else if(mSurvivorsSize < surC) {
-			delete[] mSurvivorsSize;
-			mSurvivors = new genome_t[surC];
-			mSurvivorsSize = surC;
-		}
+		// Allocate memory for parent and child storage
+		reallocate_buffer(mParents, mParentsSize, parC);
+		reallocate_buffer(mChildren, mChildrenSize, chiC);
 		
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
@@ -85,18 +72,23 @@ protected:
 		}
 		
 		// Select survivors
+		reallocate_buffer(mSurvivors, mSurvivorsSize, surC);
 		for(size_t i = 0; i < surC; ++i) {
 			mSurvivors[i] = select_survivor();
 		}
+		std::swap(mPopulation, mSurvivors);
+		std::swap(mPopulationSize, mSurvivorsSize);
 	}
 public:
 	genetic_algorithm() :
 		mParentsSize(0),
 		mChildrenSize(0),
 		mSurvivorsSize(0),
+		mPopulationSize(0),
 		mParents(nullptr),
 		mChildren(nullptr),
 		mSurvivors(nullptr),
+		mPopulation(nullptr)
 		mEpochs(0)
 	{}
 	
@@ -104,14 +96,15 @@ public:
 		if(mParents) delete[] mParents;
 		if(mChildren) delete[] mChildren;
 		if(mSurvivors) delete[] mSurvivors;
+		if(mPopulation) delete[] mPopulation;
 	}
 
 	virtual void operator()() throw() {
 		mEpochs = 0;
-		size_t popC = get_population_count();
-		genome_t* pop = get_population();
 		
 		// Seed population
+		reallocate_buffer(mPopulation, mPopulationSize, get_population_count());
+		const size_t popC = mPopulationSize;
 		for(size_t i = 0; i < popC; ++i) {
 			seed(pop[i]);
 		}

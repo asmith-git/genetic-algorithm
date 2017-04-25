@@ -71,6 +71,40 @@ protected:
 		}
 	}
 	
+	void crossover_single_point(genome_t& aGenome, typename genome_t::gene_t aValue) const throw() {
+		uint16_t points[128];
+		uint16_t order[128];
+		
+		const size_t p = get_parent_count();
+		const size_t s = aGenome.get_gene_count();
+		typename::genome_t::gene_t g* = aGenome.get_genes();
+			
+		// Calculate order
+		for(uint16_t i = 0; i < p; ++i) order[i] {
+			bool repeat = true;
+			size_t j = 0;
+			while(repeat) {
+				repeat = false;
+				j = generate_random() % p;
+				for(uint16_t k = 0; k < i; ++k) {
+					if(j == order[k]) {
+						repeat = true;
+						break;
+					}
+				}
+			}
+			order[i] = j;
+		}
+		
+		// Crossover;
+		const size_t block = s / p;
+		size_t offset = 0;
+		for(size_t i = 1; i < p; ++i) {
+			memccpy(g + offset ,mParents[order[i]].get_genes() + offset, block);
+			offset += block;
+		}
+	}
+	
 public:
 	advanced_genetic_algorithm() {
 	

@@ -18,6 +18,8 @@
 
 template<class GENOTYPE>
 class advanced_genetic_algorithm : public genetic_algorithm<GENOTYPE> {
+public:
+	enum { PARENT_MAX = 128 };
 protected:
 	virtual uint64_t generate_random() const throw() {
 		uint64_t tmp = rand();
@@ -72,8 +74,8 @@ protected:
 	}
 	
 	void crossover_single_point(genome_t& aGenome, typename genome_t::gene_t aValue) const throw() {
-		uint16_t points[128];
-		uint16_t order[128];
+		uint16_t points[PARENT_MAX];
+		uint16_t order[PARENT_MAX];
 		
 		const size_t p = get_parent_count();
 		const size_t s = aGenome.get_gene_count();
@@ -116,3 +118,4 @@ public:
 };
   
   #endif
+  

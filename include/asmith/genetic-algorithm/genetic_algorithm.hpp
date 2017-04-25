@@ -21,13 +21,16 @@ class genetic_algorithm : public base_genetic_algorithm {
 public:
 	typedef GENOME genome_t;
 private:
-	protected:
+	size_t mParentsSize;
+protected:
+	genome_t* mParents;
+protected:
 	virtual genome_t* get_population() throw() = 0;
 	virtual const genome_t* get_population() const throw() = 0;
 
 	// Operators
 	virtual void seed(genome_t&) const throw() = 0;
-	virtual const genome_t& select_parent() throw() = 0;
+	virtual const genome_t& select_parent() const throw() = 0;
 	virtual void crossover(const genome_t* const, genome_t&) throw() const = 0;
 	virtual float assess_fitness(const genome_t&) const throw() = 0;
 	virtual const genome_t& select_survivor() throw() = 0;
@@ -37,9 +40,26 @@ private:
 		const size_t popC = get_population_count();
 		const size_t parC = get_parent_count();
 		const size_t chiC = get_child_count();
+		
+		// Allocate memory for parent storage
+		if(mParentsSize < parC) {
+			delete[] mParents;
+			mParentsSize = 0;
+		}
+		
+		if(! mParents) {
+			mParents = new genome_t[parC];
+		}
 	}
 public:
-	virtual ~genetic_algorithm() throw() {}
+	genetic_algorithm() :
+		mParentsSize(0)
+		mParents(nullptr)
+	{}
+	
+	virtual ~genetic_algorithm() throw() {
+		if(mParentBuffer) delete[] mParents;
+	}
 
 };
   

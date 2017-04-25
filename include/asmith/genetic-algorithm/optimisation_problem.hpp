@@ -15,6 +15,7 @@
 #define ASMITH_GA_OPTIMISATION_PROBLEM_HPP
 
 #include <cstdint>
+#include "base_genetic_algorithm.hpp"
 
 namespace asmith {
 	template<class T, class F>
@@ -25,6 +26,7 @@ namespace asmith {
 		
 		virtual ~optimisation_problem() throw() {}
 		virtual size_t get_dimensions() const throw() = 0;
+		virtual base_genetic_algorithm::objective_mode get_objective_mode() const throw() = 0;
 		virtual input_t get_minimum_bound(const size_t) const throw() = 0;
 		virtual input_t get_maximum_bound(const size_t) const throw() = 0;
 		virtual output_t operator()(const input_t* const) const throw() = 0;

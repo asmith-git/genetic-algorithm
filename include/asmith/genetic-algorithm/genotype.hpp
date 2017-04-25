@@ -22,6 +22,7 @@ public:
 	typedef T gene_t;
 	typedef F fitness_t;
 	
+	virtual ~genotype() throw() {}
 	virtual size_t get_gene_count() const throw() = 0;
 	virtual fitness_t get_fitness() const throw() = 0;
 	virtual void set_fitness(const fitness_t aFitness) throw() = 0;

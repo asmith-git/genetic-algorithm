@@ -11,24 +11,24 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
    
-  #ifndef ASMITH_BASE_GENETIC_ALGORITHM_HPP
-  #define ASMITH_BASE_GENETIC_ALGORITHM_HPP
-  
-  #include <cstdint>
-  
-  class base_genetic_algorithm {
-  protected:
-	virtual size_t get_population_size() const throw() = 0;
+#ifndef ASMITH_BASE_GENETIC_ALGORITHM_HPP
+#define ASMITH_BASE_GENETIC_ALGORITHM_HPP
+
+#include <cstdint>
+
+class base_genetic_algorithm {
+protected:
+	virtual size_t get_population_count() const throw() = 0;
 	virtual size_t get_parent_count() const throw() = 0;
 	virtual size_t get_child_count() const throw() = 0;
-	
+
 	virtual void epoch() throw() = 0;
-	
+
 	// Operators
 	virtual bool termination_condition() const throw() = 0;
-  public:
+	public:
 	virtual ~genetic_algorithm() throw() {}
-	
-  };
-  
-  #endif
+
+};
+
+#endif

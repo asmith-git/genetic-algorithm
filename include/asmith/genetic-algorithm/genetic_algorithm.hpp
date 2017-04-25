@@ -62,6 +62,13 @@ protected:
 			mChildren = new genome_t[chiC];
 			mChildrenSize = chiC;
 		}
+		
+		// Generate children
+		for(size_t i = 0; i < chiC; ++i) {
+			for(size_t j = 0; j < parC; ++j) mParents[j] = select_parent();
+			crossover(mParents, mChildren[i]);
+			mutate(mChildren[i]);
+		}
 	}
 public:
 	genetic_algorithm() :

@@ -28,6 +28,7 @@ protected:
 	genome_t* mParents;
 	genome_t* mChildren;
 	genome_t* mSurvivors;
+	size_t mEpochs;
 protected:
 	virtual genome_t* get_population() throw() = 0;
 	virtual const genome_t* get_population() const throw() = 0;
@@ -94,7 +95,8 @@ public:
 		mSurvivorsSize(0),
 		mParents(nullptr),
 		mChildren(nullptr),
-		mSurvivors(nullptr)
+		mSurvivors(nullptr),
+		mEpochs(0)
 	{}
 	
 	virtual ~genetic_algorithm() throw() {
@@ -104,12 +106,19 @@ public:
 	}
 
 	virtual void operator()() throw() {
+		mEpochs = 0;
 		size_t popC = get_population_count();
 		genome_t* pop = get_population();
 		
 		// Seed population
 		for(size_t i = 0; i < popC; ++i) {
 			seed(pop[i]);
+		}
+		
+		// Run epochs
+		while(! termination_condition()) {
+			epoch();
+			++mEpochs;
 		}
 	}
 };

@@ -60,9 +60,6 @@ protected:
 
 	// Inherited from base_genetic_algorithm
 	virtual void epoch() const throw() override {
-		mParentsSelected = 0;
-		mSurvivorsSelected = 0;
-		
 		const size_t parC = get_parent_count();
 		const size_t chiC = get_child_count();
 		const size_t surC = get_survivor_count();
@@ -73,7 +70,6 @@ protected:
 		
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
-			mParentsSelected = 0;
 			for(mParentsSelected = 0; mParentsSelected < parC; ++mParentsSelected) {
 				mParents[mParentsSelected] = select_parent();
 			}

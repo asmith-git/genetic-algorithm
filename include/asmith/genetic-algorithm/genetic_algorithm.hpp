@@ -28,7 +28,7 @@ private:
 protected:
 	genotype_t mMin;
 	genotype_t mMax;
-	genotype_t* mParents;
+	const genotype_t** mParents;
 	genotype_t* mChildren;
 	genotype_t* mSurvivors;
 	genotype_t* mPopulation;
@@ -36,14 +36,15 @@ protected:
 	size_t mParentsSelected;
 	size_t mSurvivorsSelected;
 private:
-	static bool reallocate_buffer(genotype_t*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
+	template<class T>
+	static bool reallocate_buffer(T*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
 		if(! aBuffer) {
-			aBuffer = new genotype_t[aNewSize];
+			aBuffer = new T[aNewSize];
 			aOldSize = aNewSize;
 			return true;
 		}else if(mChildrenSize < chiC) {
 			delete[] aBuffer;
-			aBuffer = new genotype_t[aNewSize];
+			aBuffer = new T[aNewSize];
 			aOldSize = aNewSize;
 			return true;
 		}
@@ -64,25 +65,25 @@ protected:
 		const size_t surC = get_survivor_count();
 		
 		// Allocate memory for parent and child storage
-		reallocate_buffer(mParents, mParentsSize, parC);
-		reallocate_buffer(mChildren, mChildrenSize, chiC);
+		reallocate_buffer<const genotype_t*>(mParents, mParentsSize, parC);
+		reallocate_buffer<genotype_t>(mChildren, mChildrenSize, chiC);
 		
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
 			for(mParentsSelected = 0; mParentsSelected < parC; ++mParentsSelected) {
-				mParents[mParentsSelected] = select_parent();
+				mParents[mParentsSelected] = &select_parent();
 			}
 			genotype_t& c = mChildren[i];
 			crossover(mParents, c);
 			mutate(c);
-			const typename genome_t::fitness_t f = assess_fitness(c);
+			const typename genotype_t::fitness_t f = assess_fitness(c);
 			c.set_fitness(f);
 			if(f < mMin.get_fitness()) mMin = c;
 			else if(f > mMin.get_fitness()) mMax = c;
 		}
 		
 		// Select survivors
-		reallocate_buffer(mSurvivors, mSurvivorsSize, surC);
+		reallocate_buffer<genotype_t>(mSurvivors, mSurvivorsSize, surC);
 		for(mSurvivorsSelected = 0; mSurvivorsSelected < surC; ++mSurvivorsSelected) {
 			mSurvivors[mSurvivorsSelected] = select_survivor();
 		}
@@ -122,7 +123,7 @@ public:
 		for(size_t i = 0; i < popC; ++i) {
 			genotype_t& c = mPopulation[i];
 			seed(c);
-			const typename genome_t::fitness_t f = assess_fitness(c);
+			const typename genotype_t::fitness_t f = assess_fitness(c);
 			c.set_fitness(f);
 			if(f < mMin.get_fitness()) mMin = c;
 			else if(f > mMin.get_fitness()) mMax = c;

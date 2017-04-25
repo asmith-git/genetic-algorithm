@@ -64,7 +64,7 @@ protected:
 			uint8_t chance = generate_random() % 100;
 			for(size_t j = 0; j < p; ++j) {
 				if(chance <= increment) {
-					g[i] = mParents[j].get_genes()[i];
+					g[i] = mParents[j]->get_genes()[i];
 					break;
 				}else {
 					chance -= increment;
@@ -102,7 +102,7 @@ protected:
 		const size_t block = s / p;
 		size_t offset = 0;
 		for(size_t i = 1; i < p; ++i) {
-			memccpy(g + offset ,mParents[order[i]].get_genes() + offset, block);
+			memccpy(g + offset ,mParents[order[i]]=>get_genes() + offset, block);
 			offset += block;
 		}
 	}

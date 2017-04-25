@@ -29,6 +29,22 @@ protected:
 	inline const genome_t& select_random(const genome_t* const aGenomes, const size_t aSize) const throw() {
 		return aGenomes[generate_random() % aSize];
 	}
+
+	inline void mutation_replacement(genome_t& aGenome, const uint8_t aChance, typename genome_t::gene_t aValue) const throw() {
+		const size_t s = aGenome.get_gene_count();
+		typename::genome_t::gene_t g* const = aGenome.get_genes();
+		for(size_t i = 0; i < s; ++i) {
+			if(generate_random() % 100 < aChance) g[i] = aValue;
+		}
+	}
+
+	inline void mutation_perturbation(genome_t& aGenome, const uint8_t aChance, typename genome_t::gene_t aStep) const throw() {
+		const size_t s = aGenome.get_gene_count();
+		typename::genome_t::gene_t g* const = aGenome.get_genes();
+		for(size_t i = 0; i < s; ++i) {
+			if(generate_random() % 100 < aChance) g[i] += generate_random() % 100 < 50 ? -aStep : aStep;
+		}
+	}
 public:
 	advanced_genetic_algorithm() {
 	

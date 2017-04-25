@@ -21,8 +21,15 @@ struct genotype {
 	typedef T gene_t;
 	typedef F fitness_t;
 	enum{ GENE_COUNT = S };
+	
 	gene_t genes[GENE_COUNT];
 	fitness_t fitness;
+	
+	inline size_t get_gene_count() const throw() { return GENE_COUNT; }
+	inline fitness_t get_fitness() const throw() { return fitness; }
+	inline void set_fitness(const fitness_t aFitness) throw() { fitness = aFitness; }
+	inline gene_t* get_genes() throw() { return genes; }
+	inline const gene_t* get_genes() const throw() { return genes; }
 };
 
 #endif

@@ -11,22 +11,24 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
    
-#ifndef ASMITH_OPTIMISATION_PROBLEM_HPP
-#define ASMITH_OPTIMISATION_PROBLEM_HPP
+#ifndef ASMITH_GA_OPTIMISATION_PROBLEM_HPP
+#define ASMITH_GA_OPTIMISATION_PROBLEM_HPP
 
 #include <cstdint>
 
-template<class T, class F>
-class optimisation_problem {
-public:
-	typedef T input_t;
-	typedef T output_t;
-	
-	virtual ~optimisation_problem() throw() {}
-	virtual size_t get_dimensions() const throw() = 0;
-	virtual input_t get_minimum_bound(const size_t) const throw() = 0;
-	virtual input_t get_maximum_bound(const size_t) const throw() = 0;
-	virtual output_t operator()(const input_t* const) const throw() = 0;
-};
+namespace asmith {
+	template<class T, class F>
+	class optimisation_problem {
+	public:
+		typedef T input_t;
+		typedef T output_t;
+		
+		virtual ~optimisation_problem() throw() {}
+		virtual size_t get_dimensions() const throw() = 0;
+		virtual input_t get_minimum_bound(const size_t) const throw() = 0;
+		virtual input_t get_maximum_bound(const size_t) const throw() = 0;
+		virtual output_t operator()(const input_t* const) const throw() = 0;
+	};
+}
 
 #endif

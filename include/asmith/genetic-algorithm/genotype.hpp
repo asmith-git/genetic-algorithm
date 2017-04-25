@@ -11,23 +11,25 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
    
-#ifndef ASMITH_GENOTYPE_HPP
-#define ASMITH_GENOTYPE_HPP
+#ifndef ASMITH_GA_GENOTYPE_HPP
+#define ASMITH_GA_GENOTYPE_HPP
 
 #include <cstdint>
 
-template<class T, class F>
-class genotype {
-public:
-	typedef T gene_t;
-	typedef F fitness_t;
-	
-	virtual ~genotype() throw() {}
-	virtual size_t get_gene_count() const throw() = 0;
-	virtual fitness_t get_fitness() const throw() = 0;
-	virtual void set_fitness(const fitness_t aFitness) throw() = 0;
-	virtual gene_t* get_genes() throw() = 0;
-	virtual const gene_t* get_genes() const throw() = 0;
-};
+namespace asmith {
+	template<class T, class F>
+	class genotype {
+	public:
+		typedef T gene_t;
+		typedef F fitness_t;
+		
+		virtual ~genotype() throw() {}
+		virtual size_t get_gene_count() const throw() = 0;
+		virtual fitness_t get_fitness() const throw() = 0;
+		virtual void set_fitness(const fitness_t aFitness) throw() = 0;
+		virtual gene_t* get_genes() throw() = 0;
+		virtual const gene_t* get_genes() const throw() = 0;
+	};
+}
 
 #endif

@@ -103,6 +103,15 @@ public:
 		if(mSurvivors) delete[] mSurvivors;
 	}
 
+	virtual void operator()() throw() {
+		size_t popC = get_population_count();
+		genome_t* pop = get_population();
+		
+		// Seed population
+		for(size_t i = 0; i < popC; ++i) {
+			seed(pop[i]);
+		}
+	}
 };
   
   #endif

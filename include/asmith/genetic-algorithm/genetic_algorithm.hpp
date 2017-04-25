@@ -16,10 +16,11 @@
 
 #include "base_genetic_algorithm.hpp"
 
-template<class GENOME>
+template<class GENOME, class FITNESS = float>
 class genetic_algorithm : public base_genetic_algorithm {
 public:
 	typedef GENOME genome_t;
+	typedef FITNESS fitness_t;
 private:
 	size_t mParentsSize;
 	size_t mChildrenSize;
@@ -37,7 +38,7 @@ protected:
 	virtual void seed(genome_t&) const throw() = 0;
 	virtual const genome_t& select_parent() const throw() = 0;
 	virtual void crossover(const genome_t* const, genome_t&) throw() const = 0;
-	virtual float assess_fitness(const genome_t&) const throw() = 0;
+	virtual fitness_t assess_fitness(const genome_t&) const throw() = 0;
 	virtual const genome_t& select_survivor() throw() = 0;
 
 	// Inherited from base_genetic_algorithm

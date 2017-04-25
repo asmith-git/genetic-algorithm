@@ -34,6 +34,8 @@ protected:
 	genome_t* mSurvivors;
 	genome_t* mPopulation;
 	size_t mEpochs;
+	size_t mParentsSelected;
+	size_t mSurvivorsSelected;
 private:
 	static bool reallocate_buffer(genome_t*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
 		if(! aBuffer) {
@@ -58,6 +60,9 @@ protected:
 
 	// Inherited from base_genetic_algorithm
 	virtual void epoch() const throw() override {
+		mParentsSelected = 0;
+		mSurvivorsSelected = 0;
+		
 		const size_t parC = get_parent_count();
 		const size_t chiC = get_child_count();
 		const size_t surC = get_survivor_count();
@@ -68,7 +73,10 @@ protected:
 		
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
-			for(size_t j = 0; j < parC; ++j) mParents[j] = select_parent();
+			mParentsSelected = 0;
+			for(mParentsSelected = 0; mParentsSelected < parC; ++mParentsSelected) {
+				mParents[mParentsSelected] = select_parent();
+			}
 			genome_t& c = mChildren[i];
 			crossover(mParents, c);
 			mutate(c);
@@ -78,8 +86,8 @@ protected:
 		
 		// Select survivors
 		reallocate_buffer(mSurvivors, mSurvivorsSize, surC);
-		for(size_t i = 0; i < surC; ++i) {
-			mSurvivors[i] = select_survivor();
+		for(mSurvivorsSelected = 0; mSurvivorsSelected < surC; ++mSurvivorsSelected) {
+			mSurvivors[mSurvivorsSelected] = select_survivor();
 		}
 		std::swap(mPopulation, mSurvivors);
 		std::swap(mPopulationSize, mSurvivorsSize);
@@ -94,7 +102,9 @@ public:
 		mChildren(nullptr),
 		mSurvivors(nullptr),
 		mPopulation(nullptr)
-		mEpochs(0)
+		mEpochs(0),
+		mParentsSelected(0),
+		mSurvivorsSelected(0)
 	{}
 	
 	virtual ~genetic_algorithm() throw() {

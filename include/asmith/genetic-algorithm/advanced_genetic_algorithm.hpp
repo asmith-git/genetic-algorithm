@@ -14,6 +14,7 @@
 #ifndef ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
 #define ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
 
+#include <random>
 #include "genetic_algorithm.hpp"
 
 namespace asmith {
@@ -22,11 +23,15 @@ namespace asmith {
 	public:
 		enum { MAX_PARENTS = 128 };
 	protected:
-		virtual uint64_t generate_random() const throw() {
-			uint64_t tmp = rand();
-			tmp <<= 32L;
-			tmp |= rand();
-			return tmp;
+		virtual int generate_random() const throw() {
+			static std::mt19937 RNG;
+			static std::uniform_int_distribution<std::mt19937::result_type> DISTRIBUTION(0,std::numeric_limits<int>::max());
+			static bool ONCE = true;
+			if(ONCE) {
+				ONCE = false;
+				RNG.seed(std::random_device()());
+			}
+			return DISTRIBUTION(RNG);
 		}
 
 		// Selection

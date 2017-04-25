@@ -16,35 +16,34 @@
 
 #include "base_genetic_algorithm.hpp"
 
-template<class GENOME, class FITNESS = float>
+template<class GENOTYPE>
 class genetic_algorithm : public base_genetic_algorithm {
 public:
-	typedef GENOME genome_t;
-	typedef FITNESS fitness_t;
+	typedef GENOTYPE genotype_t;
 private:
 	size_t mParentsSize;
 	size_t mChildrenSize;
 	size_t mSurvivorsSize;
 	size_t mPopulationSize;
 protected:
-	genome_t mMin;
-	genome_t mMax;
-	genome_t* mParents;
-	genome_t* mChildren;
-	genome_t* mSurvivors;
-	genome_t* mPopulation;
+	genotype_t mMin;
+	genotype_t mMax;
+	genotype_t* mParents;
+	genotype_t* mChildren;
+	genotype_t* mSurvivors;
+	genotype_t* mPopulation;
 	size_t mEpochs;
 	size_t mParentsSelected;
 	size_t mSurvivorsSelected;
 private:
-	static bool reallocate_buffer(genome_t*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
+	static bool reallocate_buffer(genotype_t*& aBuffer, size_t& aOldSize, const size_t aNewSize) {
 		if(! aBuffer) {
-			aBuffer = new genome_t[aNewSize];
+			aBuffer = new genotype_t[aNewSize];
 			aOldSize = aNewSize;
 			return true;
 		}else if(mChildrenSize < chiC) {
 			delete[] aBuffer;
-			aBuffer = new genome_t[aNewSize];
+			aBuffer = new genotype_t[aNewSize];
 			aOldSize = aNewSize;
 			return true;
 		}
@@ -52,11 +51,11 @@ private:
 	}
 protected:
 	// Operators
-	virtual void seed(genome_t&) const throw() = 0;
-	virtual const genome_t& select_parent() const throw() = 0;
-	virtual void crossover(const genome_t* const, genome_t&) throw() const = 0;
-	virtual fitness_t assess_fitness(const genome_t&) const throw() = 0;
-	virtual const genome_t& select_survivor() throw() = 0;
+	virtual void seed(genotype_t&) const throw() = 0;
+	virtual const genotype_t& select_parent() const throw() = 0;
+	virtual void crossover(const genotype_t* const, genotype_t&) throw() const = 0;
+	virtual typename genotype_t::fitness_t assess_fitness(const genotype_t&) const throw() = 0;
+	virtual const genotype_t& select_survivor() throw() = 0;
 
 	// Inherited from base_genetic_algorithm
 	virtual void epoch() const throw() override {
@@ -73,7 +72,7 @@ protected:
 			for(mParentsSelected = 0; mParentsSelected < parC; ++mParentsSelected) {
 				mParents[mParentsSelected] = select_parent();
 			}
-			genome_t& c = mChildren[i];
+			genotype_t& c = mChildren[i];
 			crossover(mParents, c);
 			mutate(c);
 			c.fitness = assess_fitness(c);
@@ -111,7 +110,7 @@ public:
 		if(mPopulation) delete[] mPopulation;
 	}
 
-	virtual void operator()() throw() {
+	virtual genotype_t operator()() throw() {
 		mEpochs = 0;
 		mMin.fitness = std::numeric_limits<fitness_t>::max();
 		mMax.fitness = std::numeric_limits<fitness_t>::min();
@@ -120,7 +119,7 @@ public:
 		reallocate_buffer(mPopulation, mPopulationSize, get_population_count());
 		const size_t popC = mPopulationSize;
 		for(size_t i = 0; i < popC; ++i) {
-			genome_t& c = mPopulation[i];
+			genotype_t& c = mPopulation[i];
 			seed(c);
 			c.fitness = assess_fitness(c);
 			if(c.fitness < mMin.fitness) mMin = c;

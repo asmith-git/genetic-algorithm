@@ -22,8 +22,10 @@ public:
 	typedef GENOME genome_t;
 private:
 	size_t mParentsSize;
+	size_t mChildrenSize;
 protected:
 	genome_t* mParents;
+	genome_t* mChildren;
 protected:
 	virtual genome_t* get_population() throw() = 0;
 	virtual const genome_t* get_population() const throw() = 0;
@@ -42,23 +44,36 @@ protected:
 		const size_t chiC = get_child_count();
 		
 		// Allocate memory for parent storage
-		if(mParentsSize < parC) {
-			delete[] mParents;
-			mParentsSize = 0;
-		}
-		
 		if(! mParents) {
 			mParents = new genome_t[parC];
+			mParentsSize = parC;
+			mParentsSize = parC;
+		}else if(mParentsSize < parC) {
+			delete[] mParents;
+			mParents = new genome_t[parC];
+			mParentsSize = parC;
+		}
+		
+		// Allocate memory for child storage
+		if(! mChildren) {
+			mChildren = new genome_t[chiC];
+		}else if(mChildrenSize < chiC) {
+			delete[] mChildrenSize;
+			mChildren = new genome_t[chiC];
+			mChildrenSize = chiC;
 		}
 	}
 public:
 	genetic_algorithm() :
-		mParentsSize(0)
-		mParents(nullptr)
+		mParentsSize(0),
+		mChildrenSize(0),
+		mParents(nullptr),
+		mChildren(nullptr)
 	{}
 	
 	virtual ~genetic_algorithm() throw() {
-		if(mParentBuffer) delete[] mParents;
+		if(mParents) delete[] mParents;
+		if(mChildren) delete[] mChildren;
 	}
 
 };

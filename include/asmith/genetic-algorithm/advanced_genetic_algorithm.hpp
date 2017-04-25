@@ -18,10 +18,11 @@
 #include "genetic_algorithm.hpp"
 
 namespace asmith {
-	template<class GENOTYPE>
+	template<class GENOTYPE, class PROBLEM>
 	class advanced_genetic_algorithm : public genetic_algorithm<GENOTYPE> {
 	public:
 		enum { MAX_PARENTS = 128 };
+		typedef PROBLEM problem_t;
 	protected:
 		virtual int generate_random() const throw() {
 			static std::mt19937 RNG;
@@ -111,6 +112,32 @@ namespace asmith {
 				memccpy(g + offset ,mParents[order[i]]=>get_genes() + offset, block);
 				offset += block;
 			}
+		}
+
+		// Inherited from basic_genetic_algorithm
+
+		virtual objective_mode get_objective_mode() const throw() override {
+			return problem_t().get_objective_mode();
+		}
+
+		// Inherited from genetic_algorithm
+
+		virtual void seed(genotype_t& aGenome) const throw() {
+			typedef typename genotype_t::gene_t gene_t;
+			const size_t d = aGenome.get_gene_count();
+			gene_t* const g = aGenome.get_genes();
+			problem_t problem;
+
+			for(size_t i = 0; i < d; ++i) {
+				const gene_t min = problem.get_minimum_bound(i);
+				const gene_t max = problem.get_maximum_bound(i);
+				const gene_t x = min + (static_cast<gene_t>(generate_random() % 1000) / 1000.f) * (max - min);
+				g[i] = x;
+			}
+		}
+
+		virtual typename genotype_t::fitness_t assess_fitness(const genotype_t& aGenome) const throw() override {
+			return problem_t()(aGenome.get_genes());
 		}
 		
 	public:

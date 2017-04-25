@@ -21,6 +21,7 @@ protected:
 	virtual size_t get_population_count() const throw() = 0;
 	virtual size_t get_parent_count() const throw() = 0;
 	virtual size_t get_child_count() const throw() = 0;
+	virtual size_t get_survivor_count() const throw() = 0;
 
 	virtual void epoch() throw() = 0;
 

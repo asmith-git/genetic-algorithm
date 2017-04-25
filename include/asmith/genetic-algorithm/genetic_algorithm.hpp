@@ -23,9 +23,11 @@ public:
 private:
 	size_t mParentsSize;
 	size_t mChildrenSize;
+	size_t mSurvivorsSize;
 protected:
 	genome_t* mParents;
 	genome_t* mChildren;
+	genome_t* mSurvivors;
 protected:
 	virtual genome_t* get_population() throw() = 0;
 	virtual const genome_t* get_population() const throw() = 0;
@@ -42,6 +44,7 @@ protected:
 		const size_t popC = get_population_count();
 		const size_t parC = get_parent_count();
 		const size_t chiC = get_child_count();
+		const size_t surC = get_survivor_count();
 		
 		// Allocate memory for parent storage
 		if(! mParents) {
@@ -63,24 +66,41 @@ protected:
 			mChildrenSize = chiC;
 		}
 		
+		// Allocate memory for survivor storage
+		if(! mSurvivors) {
+			mSurvivors = new genome_t[surC];
+		}else if(mSurvivorsSize < surC) {
+			delete[] mSurvivorsSize;
+			mSurvivors = new genome_t[surC];
+			mSurvivorsSize = surC;
+		}
+		
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
 			for(size_t j = 0; j < parC; ++j) mParents[j] = select_parent();
 			crossover(mParents, mChildren[i]);
 			mutate(mChildren[i]);
 		}
+		
+		// Select survivors
+		for(size_t i = 0; i < surC; ++i) {
+			mSurvivors[i] = select_survivor();
+		}
 	}
 public:
 	genetic_algorithm() :
 		mParentsSize(0),
 		mChildrenSize(0),
+		mSurvivorsSize(0),
 		mParents(nullptr),
-		mChildren(nullptr)
+		mChildren(nullptr),
+		mSurvivors(nullptr)
 	{}
 	
 	virtual ~genetic_algorithm() throw() {
 		if(mParents) delete[] mParents;
 		if(mChildren) delete[] mChildren;
+		if(mSurvivors) delete[] mSurvivors;
 	}
 
 };

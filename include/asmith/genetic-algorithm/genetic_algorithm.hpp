@@ -55,7 +55,7 @@ namespace asmith {
 		// Operators
 		virtual void seed(genotype_t&) const throw() = 0;
 		virtual const genotype_t& select_parent() const throw() = 0;
-		virtual void crossover(const genotype_t* const, genotype_t&) throw() const = 0;
+		virtual void crossover(const genotype_t* const, genotype_t&) const throw() = 0;
 		virtual typename genotype_t::fitness_t assess_fitness(const genotype_t&) const throw() = 0;
 		virtual const genotype_t& select_survivor() throw() = 0;
 
@@ -139,5 +139,5 @@ namespace asmith {
 			return get_objective_mode() == MINIMISE ? mMin : mMax;
 		}
 	};
-	  
+}  
 #endif

@@ -11,8 +11,8 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
 
-#ifndef ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
-#define ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
+#ifndef ASMITH_GA_ADV_GENETIC_ALGORITHM_HPP
+#define ASMITH_GA_ADV_GENETIC_ALGORITHM_HPP
 
 #include <random>
 #include "genetic_algorithm.hpp"
@@ -36,23 +36,23 @@ namespace asmith {
 
 		// Selection
 		
-		inline const genome_t& select_random(const genome_t* const aGenomes, const size_t aSize) const throw() {
+		inline const genotype_t& select_random(const genotype_t* const aGenomes, const size_t aSize) const throw() {
 			return aGenomes[generate_random() % aSize];
 		}
 
 		// Mutation
 		
-		void mutation_replacement(genome_t& aGenome, const uint8_t aChance, typename genome_t::gene_t aValue) const throw() {
+		void mutation_replacement(genotype_t& aGenome, const uint8_t aChance, typename genotype_t::gene_t aValue) const throw() {
 			const size_t s = aGenome.get_gene_count();
-			typename::genome_t::gene_t g* const = aGenome.get_genes();
+			typename::genotype_t::gene_t g* const = aGenome.get_genes();
 			for(size_t i = 0; i < s; ++i) {
 				if(generate_random() % 100 < aChance) g[i] = aValue;
 			}
 		}
 
-		void mutation_perturbation(genome_t& aGenome, const uint8_t aChance, typename genome_t::gene_t aStep) const throw() {
+		void mutation_perturbation(genotype_t& aGenome, const uint8_t aChance, typename genotype_t::gene_t aStep) const throw() {
 			const size_t s = aGenome.get_gene_count();
-			typename::genome_t::gene_t g* const = aGenome.get_genes();
+			typename::genotype_t::gene_t g* const = aGenome.get_genes();
 			for(size_t i = 0; i < s; ++i) {
 				if(generate_random() % 100 < aChance) g[i] += generate_random() % 100 < 50 ? -aStep : aStep;
 			}
@@ -60,10 +60,10 @@ namespace asmith {
 		
 		// Crossover
 		
-		void crossover_uniform(genome_t& aGenome, typename genome_t::gene_t aValue) const throw() {
+		void crossover_uniform(genotype_t& aGenome, typename genotype_t::gene_t aValue) const throw() {
 			const size_t p = get_parent_count();
 			const size_t s = aGenome.get_gene_count();
-			typename::genome_t::gene_t g* const = aGenome.get_genes();
+			typename::genotype_t::gene_t g* const = aGenome.get_genes();
 			const uint8_t increment = 100 / p;
 			
 			for(size_t i = 0; i < s; ++i) {
@@ -79,13 +79,13 @@ namespace asmith {
 			}
 		}
 		
-		void crossover_single_point(genome_t& aGenome, typename genome_t::gene_t aValue) const throw() {
+		void crossover_single_point(genotype_t& aGenome, typename genotype_t::gene_t aValue) const throw() {
 			uint16_t points[MAX_PARENTS];
 			uint16_t order[MAX_PARENTS];
 			
 			const size_t p = get_parent_count();
 			const size_t s = aGenome.get_gene_count();
-			typename::genome_t::gene_t g* = aGenome.get_genes();
+			typename::genotype_t::gene_t g* = aGenome.get_genes();
 				
 			// Calculate order
 			for(uint16_t i = 0; i < p; ++i) order[i] {
@@ -122,6 +122,6 @@ namespace asmith {
 		
 		}
 	};
-	
+}
 #endif
 	  

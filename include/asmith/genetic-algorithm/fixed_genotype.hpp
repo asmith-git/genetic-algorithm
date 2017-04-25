@@ -18,17 +18,17 @@
 
 namespace asmith {
 	template<class T, size_t S, class F = float>
-	class fixed_genotype : public genotype<C,F> {
+	class fixed_genotype : public genotype<T,F> {
 	public:
 		enum{ GENE_COUNT = S };
-	private;
+	private:
 		gene_t mGenes[GENE_COUNT];
 		fitness_t mFitness;
 	public:
 		// Inherited from genotype
 		size_t get_gene_count() const throw() override { return GENE_COUNT; }
 		fitness_t get_fitness() const throw() override { return mFitness; }
-		void set_fitness(const fitness_t aFitness) override throw() { mFitness = aFitness; }
+		void set_fitness(const fitness_t aFitness) throw()  override { mFitness = aFitness; }
 		gene_t* get_genes() throw() override { return mGenes; }
 		const gene_t* get_genes() const throw() override { return mGenes; }
 	};

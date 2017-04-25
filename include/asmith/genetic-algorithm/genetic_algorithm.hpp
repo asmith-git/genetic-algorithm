@@ -27,6 +27,8 @@ private:
 	size_t mSurvivorsSize;
 	size_t mPopulationSize;
 protected:
+	genome_t mMin;
+	genome_t mMax;
 	genome_t* mParents;
 	genome_t* mChildren;
 	genome_t* mSurvivors;
@@ -67,8 +69,11 @@ protected:
 		// Generate children
 		for(size_t i = 0; i < chiC; ++i) {
 			for(size_t j = 0; j < parC; ++j) mParents[j] = select_parent();
-			crossover(mParents, mChildren[i]);
-			mutate(mChildren[i]);
+			genome_t& c = mChildren[i];
+			crossover(mParents, c);
+			mutate(c);
+			if(c.fitness < mMin.fitness) mMin = c;
+			else if(c.fitness > mMin.fitness) mMax = c;
 		}
 		
 		// Select survivors
@@ -101,12 +106,17 @@ public:
 
 	virtual void operator()() throw() {
 		mEpochs = 0;
+		mMin.fitness = std::numeric_limits<fitness_t>::max();
+		mMax.fitness = std::numeric_limits<fitness_t>::min();
 		
 		// Seed population
 		reallocate_buffer(mPopulation, mPopulationSize, get_population_count());
 		const size_t popC = mPopulationSize;
 		for(size_t i = 0; i < popC; ++i) {
-			seed(pop[i]);
+			genome_t& c = mPopulation[i];
+			seed(c);
+			if(c.fitness < mMin.fitness) mMin = c;
+			else if(c.fitness > mMin.fitness) mMax = c;
 		}
 		
 		// Run epochs
@@ -114,6 +124,8 @@ public:
 			epoch();
 			++mEpochs;
 		}
+		
+		return get_objective_mode() == MINIMISE ? mMin : mMax;
 	}
 };
   

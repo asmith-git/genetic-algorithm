@@ -17,11 +17,18 @@
 #include <cstdint>
 
 class base_genetic_algorithm {
+public:
+	enum objective_mode : int8_t {
+		MINIMISE_PROBLEM,
+		MAXIMISE_PROBLEM
+	};
 protected:
 	virtual size_t get_initial_population_count() const throw() = 0;
 	virtual size_t get_parent_count() const throw() = 0;
 	virtual size_t get_child_count() const throw() = 0;
 	virtual size_t get_survivor_count() const throw() = 0;
+	
+	virtual objective_mode get_objective_mode() const throw() = 0;
 
 	virtual void epoch() throw() = 0;
 

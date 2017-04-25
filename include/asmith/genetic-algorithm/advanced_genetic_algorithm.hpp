@@ -44,7 +44,7 @@ namespace asmith {
 		
 		void mutation_replacement(genotype_t& aGenome, const uint8_t aChance, typename genotype_t::gene_t aValue) const throw() {
 			const size_t s = aGenome.get_gene_count();
-			typename::genotype_t::gene_t g* const = aGenome.get_genes();
+			typename genotype_t::gene_t g* const = aGenome.get_genes();
 			for(size_t i = 0; i < s; ++i) {
 				if(generate_random() % 100 < aChance) g[i] = aValue;
 			}
@@ -52,7 +52,7 @@ namespace asmith {
 
 		void mutation_perturbation(genotype_t& aGenome, const uint8_t aChance, typename genotype_t::gene_t aStep) const throw() {
 			const size_t s = aGenome.get_gene_count();
-			typename::genotype_t::gene_t g* const = aGenome.get_genes();
+			typename genotype_t::gene_t* const g = aGenome.get_genes();
 			for(size_t i = 0; i < s; ++i) {
 				if(generate_random() % 100 < aChance) g[i] += generate_random() % 100 < 50 ? -aStep : aStep;
 			}
@@ -60,11 +60,11 @@ namespace asmith {
 		
 		// Crossover
 		
-		void crossover_uniform(genotype_t& aGenome, typename genotype_t::gene_t aValue) const throw() {
+		void crossover_uniform(genotype_t& aGenome) const throw() {
 			const size_t p = get_parent_count();
 			const size_t s = aGenome.get_gene_count();
-			typename::genotype_t::gene_t g* const = aGenome.get_genes();
-			const uint8_t increment = 100 / p;
+			typename genotype_t::gene_t* const g = aGenome.get_genes();
+			const uint8_t increment = static_cast<uint8_t>(100 / p);
 			
 			for(size_t i = 0; i < s; ++i) {
 				uint8_t chance = generate_random() % 100;
@@ -85,7 +85,7 @@ namespace asmith {
 			
 			const size_t p = get_parent_count();
 			const size_t s = aGenome.get_gene_count();
-			typename::genotype_t::gene_t g* = aGenome.get_genes();
+			typename genotype_t::gene_t* g = aGenome.get_genes();
 				
 			// Calculate order
 			for(uint16_t i = 0; i < p; ++i) order[i] {

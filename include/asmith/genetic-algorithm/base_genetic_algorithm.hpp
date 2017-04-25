@@ -35,7 +35,7 @@ namespace asmith {
 		// Operators
 		virtual bool termination_condition() const throw() = 0;
 	public:
-		virtual ~genetic_algorithm() throw() {}
+		virtual ~base_genetic_algorithm() throw() {}
 	};
 }
 #endif

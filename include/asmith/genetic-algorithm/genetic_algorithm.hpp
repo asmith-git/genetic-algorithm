@@ -11,8 +11,8 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
 
-#ifndef ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
-#define ASMITH_GA_BASE_GENETIC_ALGORITHM_HPP
+#ifndef ASMITH_GA_GENETIC_ALGORITHM_HPP
+#define ASMITH_GA_GENETIC_ALGORITHM_HPP
 
 #include "base_genetic_algorithm.hpp"
 
@@ -43,7 +43,7 @@ namespace asmith {
 				aBuffer = new T[aNewSize];
 				aOldSize = aNewSize;
 				return true;
-			}else if(mChildrenSize < chiC) {
+			}else if(aOldSize < aNewSize) {
 				delete[] aBuffer;
 				aBuffer = new T[aNewSize];
 				aOldSize = aNewSize;
@@ -55,12 +55,13 @@ namespace asmith {
 		// Operators
 		virtual void seed(genotype_t&) const throw() = 0;
 		virtual const genotype_t& select_parent() const throw() = 0;
-		virtual void crossover(const genotype_t* const, genotype_t&) const throw() = 0;
+		virtual void crossover(genotype_t&) const throw() = 0;
+		virtual void mutate(genotype_t&) const throw() = 0;
 		virtual typename genotype_t::fitness_t assess_fitness(const genotype_t&) const throw() = 0;
 		virtual const genotype_t& select_survivor() throw() = 0;
 
 		// Inherited from base_genetic_algorithm
-		virtual void epoch() const throw() override {
+		virtual void epoch() throw() override {
 			const size_t parC = get_parent_count();
 			const size_t chiC = get_child_count();
 			const size_t surC = get_survivor_count();
@@ -75,7 +76,7 @@ namespace asmith {
 					mParents[mParentsSelected] = &select_parent();
 				}
 				genotype_t& c = mChildren[i];
-				crossover(mParents, c);
+				crossover(c);
 				mutate(c);
 				const typename genotype_t::fitness_t f = assess_fitness(c);
 				c.set_fitness(f);
@@ -100,7 +101,7 @@ namespace asmith {
 			mParents(nullptr),
 			mChildren(nullptr),
 			mSurvivors(nullptr),
-			mPopulation(nullptr)
+			mPopulation(nullptr),
 			mEpochs(0),
 			mParentsSelected(0),
 			mSurvivorsSelected(0)
@@ -115,11 +116,11 @@ namespace asmith {
 
 		virtual genotype_t operator()() throw() {
 			mEpochs = 0;
-			mMin.fitness = std::numeric_limits<fitness_t>::max();
-			mMax.fitness = std::numeric_limits<fitness_t>::min();
+			mMin.set_fitness(std::numeric_limits<genotype_t::fitness_t>::max());
+			mMax.set_fitness(std::numeric_limits<genotype_t::fitness_t>::min());
 			
 			// Seed population
-			reallocate_buffer(mPopulation, mPopulationSize, get_population_count());
+			reallocate_buffer(mPopulation, mPopulationSize, get_initial_population_count());
 			const size_t popC = mPopulationSize;
 			for(size_t i = 0; i < popC; ++i) {
 				genotype_t& c = mPopulation[i];
@@ -136,7 +137,7 @@ namespace asmith {
 				++mEpochs;
 			}
 			
-			return get_objective_mode() == MINIMISE ? mMin : mMax;
+			return get_objective_mode() == MINIMISE_PROBLEM ? mMin : mMax;
 		}
 	};
 }  

@@ -25,6 +25,10 @@ protected:
 		tmp |= rand();
 		return tmp;
 	}
+
+	inline const genome_t& select_random(const genome_t* const aGenomes, const size_t aSize) const throw() {
+		return aGenomes[generate_random() % aSize];
+	}
 public:
 	advanced_genetic_algorithm() {
 	

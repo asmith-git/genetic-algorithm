@@ -76,6 +76,7 @@ protected:
 			genome_t& c = mChildren[i];
 			crossover(mParents, c);
 			mutate(c);
+			c.fitness = assess_fitness(c);
 			if(c.fitness < mMin.fitness) mMin = c;
 			else if(c.fitness > mMin.fitness) mMax = c;
 		}
@@ -121,6 +122,7 @@ public:
 		for(size_t i = 0; i < popC; ++i) {
 			genome_t& c = mPopulation[i];
 			seed(c);
+			c.fitness = assess_fitness(c);
 			if(c.fitness < mMin.fitness) mMin = c;
 			else if(c.fitness > mMin.fitness) mMax = c;
 		}
